@@ -1,0 +1,17 @@
+{
+  "name": "grap",
+  "version": "0.0.1",
+  "description": "A library for data extraction on the web.",
+  "dependencies": {
+    "jsdom": "*"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-watch": "*",
+    "grunt": "~0.4.0",
+    "grunt-mocha": "~0.4.7",
+    "expect.js": "*"
+  }
+}
