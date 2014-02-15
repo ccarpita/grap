@@ -1,4 +1,8 @@
 module.exports = function(grunt) {
+
+  require('load-grunt-tasks')(grunt);
+  var exec = require('child_process').exec;
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
@@ -39,15 +43,8 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  //grunt.loadNpmTasks('grunt-mocha');
-
   grunt.registerTask('mocha', 'Run mocha tests', function() {
     var done = this.async();
-    var exec = require('child_process').exec;
     exec('mocha -R spec test/unit', function(err, stdout, stderr) {
       grunt.log.writeln(stdout);
       if (stderr) {
@@ -58,5 +55,6 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('default', ['jshint', 'mocha', 'concat', 'uglify']);
-  grunt.registerTask('test', ['jshint', 'mocha']);
+  grunt.registerTask('lint', ['jshint']);
+  grunt.registerTask('test', ['lint', 'mocha']);
 };

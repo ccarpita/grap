@@ -12,6 +12,7 @@
     "grunt-contrib-watch": "*",
     "grunt": "~0.4.0",
     "grunt-mocha": "~0.4.7",
-    "expect.js": "*"
+    "expect.js": "*",
+    "load-grunt-tasks": "~0.2.1"
   }
 }
