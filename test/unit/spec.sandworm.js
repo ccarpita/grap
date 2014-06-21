@@ -1,5 +1,5 @@
 
-var sw = require('../../src/sandworm');
+var sw = require('sandworm');
 var expect = require('expect.js');
 var mockContent = require('../mock/content');
 

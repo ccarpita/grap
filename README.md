@@ -25,8 +25,8 @@ var crawl = require('sandworm').crawl;
 // A simple example
 crawl('http://www.domain.com')
   .follow(/page-pattern/)
-  .each('.content tr')
-  .push(text('span'), 'a.title#html');
+  .each('.content tr td')
+  .push('span $text', '$attr:href')
 
 // A more complex example
 crawl('http://www.domain.com')
@@ -34,20 +34,18 @@ crawl('http://www.domain.com')
   .pace(1.0, 0.5)
   .header('id', 'content')
   .browser('phantom')
-  .do(function() {
-    follow(/directory-page-pattern/)
+  (function() {
+    this.follow(/directory-page-pattern/)
       .follow(/item-page-pattern/)
       .each('tr[data-type=val] td')
-      .do(function() {
-        push(attr('data-id'), text())
-      });
-    follow(/follow-pattern-2/)
+      .push('$attr: data-id', '$text')
+    this.follow(/follow-pattern-2/)
       .each('a.title')
-      .push(iter(), text())
-    follow(/follow-pattern-3/)
+      .push(this.html())
+    this.follow(/follow-pattern-3/)
       .each('div.content')
-      .do(function() {
-        push(element.id, element.getElementsByTagName('span')[2].innerText)
+      (function(el, $) {
+        this.push(el.id, el.getElementsByTagName('span')[2].innerText)
       });
   });
 
@@ -58,7 +56,6 @@ crawl('http://www.wikipedia.org/List_of_Fruit')
   .follow(/regex/)
   .depth(3)
 ```
-
 
 # SandScript
 
