@@ -1,6 +1,6 @@
 # Not Implemented!
 
-This project utilizes README-driven development (RDD) in addition to BDD.  The library and examples below are not yet implemented.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
+This project utilizes README-driven development (RDD).  The library and examples below are not yet implemented.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
 
 # About
 
@@ -14,8 +14,9 @@ Under the hood, Sandworm uses jsdom or phantomjs (configurable) with its own per
 
 # Why another crawling library?
 
-I felt like many of the existing crawl libraries were overly reliant on templating and didn't offer the flexibility of logical flows that web data extraction may demand.
-With Sandworm I am seeking a design pattern that resembles declarative syntax for basic use cases, with the option to expand decision points into complex logic where necessary.
+The author felt like many of the existing crawl libraries were overly reliant on templating and didn't offer the flexibility of logical flows that web data extraction may demand.
+
+The design of Sandworm seeks a pattern that resembles declarative syntax for basic use cases, with the option to expand decision points into complex logic where necessary.
 
 # Example
 
@@ -24,36 +25,39 @@ var crawl = require('sandworm').crawl;
 
 // A simple example
 crawl('http://www.domain.com')
-  .follow(/page-pattern/)
+.follow(/page-pattern/)
   .each('.content tr td')
-  .push('span $text', '$attr:href')
+    .push('span $text', '$attr:href')
 
 // A more complex example
 crawl('http://www.domain.com')
-  .format('tsv')
-  .pace(1.0, 0.5)
-  .header('id', 'content')
-  .browser('phantom')
-  (function() {
-    this.follow(/directory-page-pattern/)
-      .follow(/item-page-pattern/)
+.format('tsv')
+.pace(1.0, 0.5)
+.header('id', 'content')
+.browser('phantom')
+(function() {
+  this
+  .follow(/directory-page-pattern/)
+    .follow(/item-page-pattern/)
       .each('tr[data-type=val] td')
-      .push('$attr: data-id', '$text')
-    this.follow(/follow-pattern-2/)
-      .each('a.title')
+        .push('$attr: data-id', '$text')
+  this
+  .follow(/follow-pattern-2/)
+    .each('a.title')
       .push(this.html())
-    this.follow(/follow-pattern-3/)
-      .each('div.content')
-      (function(el, $) {
-        this.push(el.id, el.getElementsByTagName('span')[2].innerText)
-      });
-  });
+  this
+  .follow(/follow-pattern-3/)
+    .each('div.content')
+    (function(el, $) {
+      this.push(el.id, el.getElementsByTagName('span')[2].innerText)
+    });
+});
 
 // Extraction Training. This is a stretch goal ;)
 crawl('http://www.wikipedia.org/List_of_Fruit')
-  .train(url1, ['Apples'])
-  .train(url2, ['Bananas'], /masking-regex/)
-  .follow(/regex/)
+.train(url1, ['Apples'])
+.train(url2, ['Bananas'], /masking-regex/)
+.follow(/regex/)
   .depth(3)
 ```
 

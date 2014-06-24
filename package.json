@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A library for data extraction on the web.",
   "dependencies": {
-    "jsdom": "*"
+    "jsdom": "^0.11.0",
+    "when": "^3.2.3"
   },
   "devDependencies": {
     "grunt-contrib-concat": "*",
