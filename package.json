@@ -1,19 +1,22 @@
 {
-  "name": "grap",
+  "name": "sandworm",
   "version": "0.0.1",
-  "description": "A library for data extraction on the web.",
+  "description": "A versatile, fluid library for web data extraction",
   "dependencies": {
     "jsdom": "^0.11.0",
+    "lodash": "^2.4.1",
     "when": "^3.2.3"
   },
+  "index": "lib/sandworm.js",
   "devDependencies": {
-    "grunt-contrib-concat": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-contrib-watch": "*",
-    "grunt": "~0.4.0",
-    "grunt-mocha": "~0.4.11",
     "expect.js": "*",
-    "load-grunt-tasks": "~0.2.1"
+    "grunt": "~0.4.0",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-mocha": "~0.4.11",
+    "load-grunt-tasks": "~0.2.1",
+    "sinon": "^1.10.2"
   }
 }
