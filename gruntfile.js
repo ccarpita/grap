@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
   var exec = require('child_process').exec;
+  var mocha_args = process.env.MOCHA_ARGS || '';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
