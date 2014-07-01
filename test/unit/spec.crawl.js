@@ -22,6 +22,10 @@ describe('Sandworm Library', function() {
 
   describe('Crawling', function() {
 
+    // Jsdom eval can be expensive
+    this.timeout(10000);
+    this.slow(2000);
+
     it('Should handle a trivial single-page crawl with a push declaration', function() {
       return when.promise(function(resolve, reject) {
         var url = 'http://localhost:8080';
@@ -38,6 +42,7 @@ describe('Sandworm Library', function() {
           expect(captureData).to.be.an('array');
           expect(captureData.length).to.equal(1);
           expect(captureData[0]).to.equal('Hello World');
+          resolve();
         });
       });
     });
