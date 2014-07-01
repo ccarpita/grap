@@ -2,31 +2,12 @@ module.exports = function(grunt) {
 
   require('load-grunt-tasks')(grunt);
   var exec = require('child_process').exec;
-  var mocha_args = process.env.MOCHA_ARGS || '';
+  var mochaArgs = ' ' + (process.env.MOCHA_ARGS || '');
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
-      options: {
-        separator: ";"
-      },
-      dist: {
-        src: ['src/**/*.js'],
-        dest: 'dist/<%= pkg.name %>.js'
-      }
-    },
-    uglify: {
-      options: {
-        banner: '/* <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
-      dist: {
-        files: {
-          'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
     jshint: {
-      files: ['gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
         globals: {
           module: true,
@@ -34,28 +15,20 @@ module.exports = function(grunt) {
         }
       }
     },
-    mocha: {
-      src: ['test/**/*.js'],
-      reporter: 'spec',
-    },
     watch: {
       files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'mocha']
+      tasks: ['jshint', 'exec:unitTest']
+    },
+    exec: {
+      unitTest: './node_modules/.bin/mocha -R spec' + mochaArgs,
+      coverage: './node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -u exports test/unit -R spec' + mochaArgs,
+      debug: 'npm-debug _mocha -s 600000 -s 600000' + mochaArgs
     }
   });
 
-  grunt.registerTask('mocha', 'Run mocha tests', function() {
-    var done = this.async();
-    exec('mocha -R spec test/unit', function(err, stdout, stderr) {
-      grunt.log.writeln(stdout);
-      if (stderr) {
-        grunt.log.error(stderr);
-      }
-      done(err !== null ? false : true);
-    });
-  });
-
-  grunt.registerTask('default', ['jshint', 'mocha', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'exec:unitTest']);
   grunt.registerTask('lint', ['jshint']);
-  grunt.registerTask('test', ['lint', 'mocha']);
+  grunt.registerTask('test', ['lint', 'exec:coverage']);
+
+  grunt.registerTask('debug', ['exec:debug']);
 };
