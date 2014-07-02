@@ -2,9 +2,9 @@
 
 This project utilizes README-driven development (RDD).  Yes, I just made that up.
 
-The library and examples below are not fully implemented tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
+The library and examples below are not fully implemented and tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
 
-# Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm) [![Dependency Status](https://gemnasium.com/ccarpita/sandworm.svg)](https://gemnasium.com/ccarpita/sandworm)
+# Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm) [![Dependency Status](https://gemnasium.com/ccarpita/sandworm.svg)](https://gemnasium.com/ccarpita/sandworm) [![Coverage Status](https://coveralls.io/repos/ccarpita/sandworm/badge.png?branch=master)](https://coveralls.io/r/ccarpita/sandworm?branch=master)
 
 
 Sandworm is a library that provides all of the boilerplate a developer needs to crawl and parse web sites, allowing the library user to focus on:
@@ -38,22 +38,23 @@ crawl('http://www.domain.com')
 .pace(1.0, 0.5)
 .header('id', 'content')
 .browser('phantom')
-(function() {
-  this
-  .follow(/directory-page-pattern/)
-    .follow(/item-page-pattern/)
-      .each('tr[data-type=val] td')
-        .push('$attr: data-id', '$text')
-  this
-  .follow(/follow-pattern-2/)
-    .each('a.title')
-      .push(this.html())
-  this
-  .follow(/follow-pattern-3/)
-    .each('div.content')
-    (function(el, $) {
-      this.push(el.id, el.getElementsByTagName('span')[2].innerText)
-    });
+.follow(/directory-page-pattern/)
+  .follow(/item-page-pattern/)
+    .each('tr[data-type=val] td')
+      .extract('$attr: data-id', '$text')
+    .end()
+  .end()
+.end()
+.follow(/directory-pattern-2/)
+  .each('a.title')
+    .extract('$html')
+  .end()
+.end()
+.follow(/follow-pattern-3/)
+  .each('div.content')
+  (function(el) {
+    this.push(el.id, el.getElementsByTagName('span')[2].textContent)
+  });
 });
 
 // Extraction Training. This is a stretch goal ;)
