@@ -7,8 +7,13 @@
     "lodash": "^2.4.1",
     "when": "^3.2.3"
   },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/ccarpita/sandworm.git"
+  },
   "index": "lib/sandworm.js",
   "devDependencies": {
+    "coveralls": "^2.10.1",
     "expect.js": "*",
     "grunt": "~0.4.0",
     "grunt-cli": "^0.1.13",
@@ -25,7 +30,7 @@
     "sinon": "^1.10.2"
   },
   "engines": {
-    "node" : ">=0.10.0 <0.12"
+    "node": ">=0.10.0 <0.12"
   },
   "scripts": {
     "test": "./node_modules/.bin/grunt test"
