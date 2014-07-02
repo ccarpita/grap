@@ -1,6 +1,8 @@
 # Not Fully Implemented!
 
-This project utilizes README-driven development (RDD).  The library and examples below are not yet implemented.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
+This project utilizes README-driven development (RDD).  Yes, I just made that up.
+
+The library and examples below are not fully implemented tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
 
 # Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm)
 
