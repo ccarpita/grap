@@ -24,6 +24,9 @@
     "nock": "^0.40.0",
     "sinon": "^1.10.2"
   },
+  "engines": {
+    "node" : ">=0.10.0 <0.12"
+  },
   "scripts": {
     "test": "./node_modules/.bin/grunt test"
   }
