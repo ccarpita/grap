@@ -4,7 +4,8 @@ This project utilizes README-driven development (RDD).  Yes, I just made that up
 
 The library and examples below are not fully implemented tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
 
-# Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm)
+# Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm) [![Dependency Status](https://gemnasium.com/ccarpita/sandworm.svg)](https://gemnasium.com/ccarpita/sandworm)
+
 
 Sandworm is a library that provides all of the boilerplate a developer needs to crawl and parse web sites, allowing the library user to focus on:
 
