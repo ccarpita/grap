@@ -48,47 +48,55 @@ describe('Sandworm Library', function() {
     });
 
     it('Should iterate over elements provided by each clause', function() {
+      var html = '<div class="content"><span class="a">One</span><span class="b">Two</span>';
+      return crawlTest(html, function() {
+        this.each('span')
+          .extract('$text');
+      }, function(data) {
+        expect(data.length).to.equal(2);
+        expect(data[0][0]).to.equal('One');
+        expect(data[1][0]).to.equal('Two');
+      });
+    });
+
+    function extractTest(html, extract, assertValue) {
+      return crawlTest(html, function() { this.extract(extract); }, assertValue);
+    }
+
+    function crawlTest(html, businessLogic, assertion) {
       return when.promise(function(resolve, reject) {
-        var url = 'http://localhost:8080';
-        var html = '<div class="content"><span class="a">One</span><span class="b">Two</span>';
-        mockEngine.setUrlContent(url, html);
+        var baseUrl = 'http://localhost:8080';
+        if (typeof html === 'string') {
+          mockEngine.setUrlContent(baseUrl, html);
+        } else if (typeof html === 'object') {
+          for (var url in html) {
+            if (html.hasOwnProperty(url)) {
+              mockEngine.setUrlContent(url, html[url]);
+            }
+          }
+        }
         var captureData = [];
-        crawl(url)
-        .each('span')
-          .extract('$text')
-        .end()
-        .pipe(function(data) {
+        var assertValue;
+        if (typeof assertion !== 'function') {
+          assertValue = assertion;
+          assertion = function() {
+            expect(captureData.length).to.equal(1);
+            expect(captureData[0][0]).to.equal(assertValue);
+          };
+        }
+
+        var job = crawl(baseUrl);
+        businessLogic.apply(job);
+        job.pipe(function(data) {
           captureData.push(data);
         })
         .on('complete', function() {
           try {
-            expect(captureData).to.be.an('array');
-            expect(captureData.length).to.equal(2);
-            expect(captureData[0][0]).to.equal('One');
-            expect(captureData[1][0]).to.equal('Two');
+            assertion(captureData);
             resolve();
           } catch(e) {
             reject(e);
           }
-        });
-      });
-    });
-
-    function extractTest(html, extract, value) {
-      return when.promise(function(resolve, reject) {
-        var url = 'http://localhost:8080';
-        mockEngine.setUrlContent(url, html);
-        var captureData = null;
-        crawl(url)
-        .extract(extract)
-        .pipe(function(data) {
-          captureData = data;
-        })
-        .on('complete', function() {
-          expect(captureData).to.be.an('array');
-          expect(captureData.length).to.equal(1);
-          expect(captureData[0]).to.equal(value);
-          resolve();
         });
       });
     }
