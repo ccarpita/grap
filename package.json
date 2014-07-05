@@ -18,6 +18,7 @@
     "expect.js": "*",
     "grunt": "~0.4.0",
     "grunt-cli": "^0.1.13",
+    "grunt-continue": "0.0.1",
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "*",
     "grunt-contrib-uglify": "*",

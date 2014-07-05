@@ -8,6 +8,7 @@ module.exports = function(grunt) {
   var execCoverage = './node_modules/.bin/istanbul cover ' +
       './node_modules/.bin/_mocha -- ' +
       '-u exports test/unit -R spec' + mochaArgs;
+  var coverallsBin = './node_modules/coveralls/bin/coveralls.js';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -27,8 +28,8 @@ module.exports = function(grunt) {
     exec: {
       unitTest: execTest,
       coverage: execCoverage,
-      coverageBuild: execCoverage + ' && cat ./coverage/lcov.info | ' +
-          './node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage',
+      coveralls: 'cat ./coverage/lcov.info | ' + coverallsBin,
+      clean: 'rm -rf ./converage',
       debug: 'npm-debug _mocha -s 600000 -s 600000' + mochaArgs
     }
   });
@@ -36,7 +37,12 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['jshint', 'exec:unitTest']);
   grunt.registerTask('lint', ['jshint']);
   grunt.registerTask('coverage', ['exec:coverage']);
-  grunt.registerTask('test', ['lint', 'exec:coverageBuild']);
-
+  grunt.registerTask('clean', ['exec:clean']);
   grunt.registerTask('debug', ['exec:debug']);
+  grunt.registerTask('test', [
+    'lint',
+    'exec:coverage',
+    'continueOn', // force-run coveralls
+    'exec:coveralls'
+  ]);
 };
