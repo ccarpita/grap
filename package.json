@@ -4,6 +4,7 @@
   "description": "A versatile, fluid library for web data extraction",
   "dependencies": {
     "jsdom": "^0.11.0",
+    "linkedlist": "^1.0.1",
     "lodash": "^2.4.1",
     "when": "^3.2.3"
   },
@@ -24,9 +25,8 @@
     "grunt-exec": "^0.4.5",
     "grunt-mocha": "~0.4.11",
     "istanbul": "^0.2.13",
-    "load-grunt-tasks": "~0.2.1",
+    "load-grunt-tasks": "~0.6.0",
     "mocha": "^1.20.1",
-    "nock": "^0.40.0",
     "sinon": "^1.10.2"
   },
   "engines": {

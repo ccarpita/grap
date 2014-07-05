@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   var exec = require('child_process').exec;
   var mochaArgs = ' ' + (process.env.MOCHA_ARGS || '');
 
-  var execTest = './node_modules/.bin/mocha -R spec' + mochaArgs;
+  var execTest = './node_modules/.bin/mocha -R spec test/unit' + mochaArgs;
   var execCoverage = './node_modules/.bin/istanbul cover ' +
       './node_modules/.bin/_mocha -- ' +
       '-u exports test/unit -R spec' + mochaArgs;
