@@ -25,6 +25,8 @@ describe('Sandworm Library', function() {
     // Jsdom eval can be expensive
     this.timeout(10000);
     this.slow(2000);
+    var defaultBaseUrl = 'http://localhost:8080';
+    var defaultPace = 0.001;
 
     it('Should perform a trivial crawl with an extract declaration', function() {
       return extractTest(
@@ -59,15 +61,29 @@ describe('Sandworm Library', function() {
       });
     });
 
+    it('Should follow links and extract data in subsequent pages', function() {
+      var htmlContent = {};
+      htmlContent[defaultBaseUrl] = '<ul id="content" class="links"><li><span class="answer"><a href="http://localhost:8080/foo">Link to Answer</a></span></li></ul>';
+      htmlContent['http://localhost:8080/foo'] = '<div id="content"><span class="answer">Hello World</span></div>';
+      return crawlTest(htmlContent, function() {
+        this.follow(/\/foo/)
+          .each('#content span.answer')
+            .extract('$text');
+      }, function(data) {
+        // check length == 1 to assert that `each` only applies to `follow` context
+        expect(data.length).to.equal(1);
+        expect(data[0][0]).to.equal('Hello World');
+      });
+    });
+
     function extractTest(html, extract, assertValue) {
       return crawlTest(html, function() { this.extract(extract); }, assertValue);
     }
 
     function crawlTest(html, businessLogic, assertion) {
       return when.promise(function(resolve, reject) {
-        var baseUrl = 'http://localhost:8080';
         if (typeof html === 'string') {
-          mockEngine.setUrlContent(baseUrl, html);
+          mockEngine.setUrlContent(defaultBaseUrl, html);
         } else if (typeof html === 'object') {
           for (var url in html) {
             if (html.hasOwnProperty(url)) {
@@ -85,10 +101,14 @@ describe('Sandworm Library', function() {
           };
         }
 
-        var job = crawl(baseUrl);
+        var job = crawl(defaultBaseUrl);
+        job.pace(defaultPace);
         businessLogic.apply(job);
         job.pipe(function(data) {
           captureData.push(data);
+        })
+        .on('error', function(error) {
+          console.error('[Crawl Error]', error);
         })
         .on('complete', function() {
           try {
