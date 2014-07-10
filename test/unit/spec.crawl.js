@@ -1,32 +1,25 @@
-var sw = require('../../lib/sandworm');
 var when = require('when');
 var expect = require('expect.js');
-var mockContent = require('../mock/content');
-var engine = require('../../lib/engine');
-//var sinon = require('sinon');
+
+var crawl = require('../../lib/sandworm').crawl;
+var nock = require('nock');
 
 describe('Sandworm Library', function() {
 
   var mockUrl = 'http://www.foobar.com';
-  var mockEngine = new engine.Mock();
-
-  before(function() {
-    for (var url in mockContent) {
-      mockEngine.setUrlContent(url, mockContent[url]);
-    }
-  });
-
-  function crawl(url) {
-    return sw.crawl(url).browser(mockEngine);
-  }
 
   describe('Crawling', function() {
 
     // Jsdom eval can be expensive
     this.timeout(10000);
     this.slow(2000);
-    var defaultBaseUrl = 'http://localhost:8080';
+    var defaultBaseUrl = 'http://localhost';
     var defaultPace = 0.001;
+    var defaultPaceRand = 0.0001;
+
+    var contentMap= {};
+    contentMap['/'] = '<ul id="content" class="links"><li><span class="answer"><a href="http://localhost/foo">Link to Answer</a></span></li></ul>';
+    contentMap['/foo'] = '<div id="content"><span class="answer">Hello World</span></div>';
 
     it('Should perform a trivial crawl with an extract declaration', function() {
       return extractTest(
@@ -62,10 +55,8 @@ describe('Sandworm Library', function() {
     });
 
     it('Should follow links and extract data in subsequent pages', function() {
-      var htmlContent = {};
-      htmlContent[defaultBaseUrl] = '<ul id="content" class="links"><li><span class="answer"><a href="http://localhost:8080/foo">Link to Answer</a></span></li></ul>';
-      htmlContent['http://localhost:8080/foo'] = '<div id="content"><span class="answer">Hello World</span></div>';
-      return crawlTest(htmlContent, function() {
+
+      return crawlTest(contentMap, function() {
         this.follow(/\/foo/)
           .each('#content span.answer')
             .extract('$text');
@@ -76,18 +67,73 @@ describe('Sandworm Library', function() {
       });
     });
 
+    it('Should execute selector handlers with the current element', function() {
+      return crawlTest('<div id="content"><ul class="list"><li>One</li><li>Two</li></ul></div>', function() {
+        this.each('#content ul li')(function(el) {
+          expect(el.tagName).to.equal('LI');
+          this.push(el.textContent);
+        });
+      }, function(data) {
+        expect(data.length).to.equal(2);
+        expect(data[0][0]).to.equal('One');
+        expect(data[1][0]).to.equal('Two');
+      });
+    });
+
+    it('Should execute follow handler with the current window', function() {
+      return crawlTest(contentMap, function() {
+        this.follow(/\/foo/)(function(window) {
+          var span = window.document.querySelector('span.answer');
+          this.push(span.textContent);
+        });
+      }, function(data) {
+        expect(data.length).to.equal(1);
+        expect(data[0][0]).to.equal('Hello World');
+      });
+    });
+
+    it('Selector should emit notFound:elements', function() {
+      return crawlTest('<div id="content"></div>', function() {
+        var job = this;
+        this.each('#content span.title').on('notFound:elements', function() {
+          job.push('notFound:elements');
+        });
+      }, function(data) {
+        expect(data[0][0]).to.equal('notFound:elements');
+      });
+    });
+
+    it('Should execute the job handler on init', function() {
+      return crawlTest('<div></div>', function() {
+        this(function() { this.job.push('ok'); });
+      }, function(data) {
+        expect(data.length).to.equal(1);
+        expect(data[0][0]).to.equal('ok');
+      });
+    });
+
+    it('Should return valid crawl stats', function() {
+      return crawlTest('<div>foo</div>', function() {
+        this.extract('div $text');
+      }, function(data, job) {
+        expect(job.getNumCrawled()).to.equal(1);
+        expect(job.wasCrawled(defaultBaseUrl)).to.equal(true);
+      });
+    });
+
     function extractTest(html, extract, assertValue) {
       return crawlTest(html, function() { this.extract(extract); }, assertValue);
     }
 
     function crawlTest(html, businessLogic, assertion) {
       return when.promise(function(resolve, reject) {
+        var httpScope = nock(defaultBaseUrl);
         if (typeof html === 'string') {
-          mockEngine.setUrlContent(defaultBaseUrl, html);
+          httpScope.get('/').reply(200, html);
         } else if (typeof html === 'object') {
-          for (var url in html) {
-            if (html.hasOwnProperty(url)) {
-              mockEngine.setUrlContent(url, html[url]);
+          for (var path in html) {
+            if (html.hasOwnProperty(path)) {
+              httpScope.get(path).reply(200, html[path]);
             }
           }
         }
@@ -101,8 +147,8 @@ describe('Sandworm Library', function() {
           };
         }
 
-        var job = crawl(defaultBaseUrl);
-        job.pace(defaultPace);
+        var job = crawl(defaultBaseUrl).browser('jsdom');
+        job.pace(defaultPace, defaultPaceRand);
         businessLogic.apply(job);
         job.pipe(function(data) {
           captureData.push(data);
@@ -112,7 +158,7 @@ describe('Sandworm Library', function() {
         })
         .on('complete', function() {
           try {
-            assertion(captureData);
+            assertion(captureData, job);
             resolve();
           } catch(e) {
             reject(e);
