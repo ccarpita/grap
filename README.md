@@ -21,41 +21,38 @@ The author felt like many of the existing crawl libraries were overly reliant on
 
 The design of Sandworm seeks a pattern that resembles declarative syntax for basic use cases, with the option to expand decision points into complex logic where necessary.
 
-# Example
+# Examples
+
+## Simple
 
 ```js
-var crawl = require('sandworm').crawl;
-
-// A simple example
-crawl('http://www.domain.com')
+require('sandworm')('http://www.domain.com')
 .follow(/page-pattern/)
   .each('.content tr td')
-    .push('span $text', '$attr:href')
+    .extract('span $text', '$attr:href')
 
-// A more complex example
-crawl('http://www.domain.com')
-.format('tsv')
+```
+
+## More Complex
+
+```js
+require('sandworm')('http://www.domain.com')
 .pace(1.0, 0.5)
-.header('id', 'content')
 .browser('phantom')
 .follow(/directory-page-pattern/)
   .follow(/item-page-pattern/)
     .each('tr[data-type=val] td')
       .extract('$attr: data-id', '$text')
-    .end()
-  .end()
-.end()
+.top()
 .follow(/directory-pattern-2/)
   .each('a.title')
     .extract('$html')
-  .end()
-.end()
+.top()
 .follow(/follow-pattern-3/)
   .each('div.content')
   (function(el) {
     this.push(el.id, el.getElementsByTagName('span')[2].textContent)
   });
-});
 
 // Extraction Training. This is a stretch goal ;)
 crawl('http://www.wikipedia.org/List_of_Fruit')
