@@ -1,8 +1,7 @@
 var when = require('when');
-var expect = require('expect.js');
-
-var crawl = require('../../lib/sandworm').crawl;
+var expect = require('chai').expect;
 var nock = require('nock');
+var crawl = require('../../lib/sandworm').crawl;
 
 describe('Sandworm Library', function() {
 

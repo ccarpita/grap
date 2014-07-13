@@ -15,8 +15,8 @@
   },
   "index": "lib/sandworm.js",
   "devDependencies": {
+    "chai": "^1.9.1",
     "coveralls": "^2.10.1",
-    "expect.js": "*",
     "grunt": "~0.4.0",
     "grunt-cli": "^0.1.13",
     "grunt-continue": "0.0.1",
