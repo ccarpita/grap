@@ -2,7 +2,7 @@
 
 This project utilizes README-driven development (RDD).  Yes, I just made that up.
 
-The library and examples below are not fully implemented and tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released, which hopefully should be soon!
+The library and examples below are not fully implemented and tested.  This notice will be removed when the first usable and 100% unit tested version (0.1.0) of Sandworm has been released.
 
 # Sandworm [![Build Status](https://travis-ci.org/ccarpita/sandworm.svg?branch=master)](https://travis-ci.org/ccarpita/sandworm) [![Dependency Status](https://gemnasium.com/ccarpita/sandworm.svg)](https://gemnasium.com/ccarpita/sandworm) [![Coverage Status](https://coveralls.io/repos/ccarpita/sandworm/badge.png?branch=master)](https://coveralls.io/r/ccarpita/sandworm?branch=master)
 
